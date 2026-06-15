@@ -55,7 +55,7 @@ interface StudioState {
 
   setWristSize: (size: number) => void;
   setBeadSize: (size: number) => void;
-  addBead: (bead: CrystalBead) => void;
+  addBead: (bead: CrystalBead, beadSize?: number) => void;
   addAccessory: (accessory: Accessory) => void;
   addCustomBead: (
     name: string,
@@ -106,14 +106,16 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   setWristSize: (size: number) => set({ wristSize: size }),
   setBeadSize: (size: number) => set({ beadSize: size }),
 
-  addBead: (bead: CrystalBead) => {
-    const { currentItems } = get();
+  addBead: (bead: CrystalBead, beadSize?: number) => {
+    const { currentItems, beadSize: defaultSize } = get();
+    const size = beadSize ?? defaultSize;
     const item: DesignBead = {
       kind: "bead",
       id: generateId(),
       beadId: bead.id,
       bead: { ...bead },
       position: currentItems.length,
+      beadSize: size,
     };
     const newItems = [...currentItems, item];
     set({ currentItems: newItems, ...pushHistory(set, get, newItems) });
@@ -200,17 +202,19 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   insertItemAt: (position: number) => {
-    const { selectedItem, currentItems } = get();
+    const { selectedItem, currentItems, beadSize: defaultSize } = get();
     if (!selectedItem) return;
 
     let newItem: StudioItem;
     if ("shape" in selectedItem) {
+      const size = selectedItem.size ?? defaultSize;
       newItem = {
         kind: "bead",
         id: generateId(),
         beadId: selectedItem.id,
         bead: { ...selectedItem },
         position,
+        beadSize: size,
       };
     } else {
       newItem = {

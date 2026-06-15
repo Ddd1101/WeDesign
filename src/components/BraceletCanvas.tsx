@@ -1,9 +1,9 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { useStudioStore } from "@/store/studioStore";
 import type { StudioItem } from "@/types";
 
 export default function BraceletCanvas() {
-  const { currentItems, removeItem, moveItem, insertItemAt, selectedItem, wristSize, beadSize } =
+  const { currentItems, removeItem, moveItem, insertItemAt, selectedItem, wristSize, beadSize: globalBeadSize } =
     useStudioStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<{
@@ -15,17 +15,60 @@ export default function BraceletCanvas() {
 
   const size = 360;
   const count = currentItems.length;
+
+  // 每个元素的实际尺寸（珠子用独立尺寸，配件用默认尺寸）
+  const itemSizes = useMemo(() => {
+    return currentItems.map((item) => {
+      if (item.kind === "bead") {
+        return item.beadSize ?? globalBeadSize;
+      }
+      // 配件默认使用 globalBeadSize 的一半
+      return globalBeadSize * 0.75;
+    });
+  }, [currentItems, globalBeadSize]);
+
+  const totalSize = itemSizes.reduce((sum, s) => sum + s, 0);
+
   const baseRadius = (size * 0.7) / 2;
   const radius = Math.max(80, Math.min(180, (wristSize / 160) * baseRadius));
 
-  const baseBeadRadius =
-    count > 0
-      ? Math.min((2 * Math.PI * radius) / count / 2.2, size * 0.06)
-      : 14;
-  const beadRadius = Math.max(8, Math.min(28, (beadSize / 8) * baseBeadRadius));
+  // 计算最大珠子尺寸（用于渲染大小）
+  const maxBeadSize = useMemo(() => {
+    if (count === 0) return 14 * (globalBeadSize / 8);
+    return Math.min(
+      (2 * Math.PI * radius) / count / 2.2,
+      size * 0.06
+    ) * (globalBeadSize / 8);
+  }, [count, radius, globalBeadSize, size]);
 
-  const getItemAngle = (i: number) =>
-    (i / Math.max(count, 1)) * 2 * Math.PI - Math.PI / 2;
+  // 将尺寸映射到像素半径
+  const sizeToPixelRadius = (beadSize: number) => {
+    if (count === 0) return maxBeadSize / 2;
+    const base = Math.min((2 * Math.PI * radius) / count / 2.2, size * 0.06);
+    const scaled = (beadSize / 8) * base;
+    return Math.max(6, Math.min(28, scaled));
+  };
+
+  // 每个元素的像素半径
+  const itemPixelRadii = useMemo(
+    () => itemSizes.map((s) => sizeToPixelRadius(s)),
+    [itemSizes],
+  );
+
+  // 累积角度：按每个元素的实际尺寸占比分配角度
+  const cumulativeAngles = useMemo(() => {
+    const angles: number[] = [];
+    let cumulative = 0;
+    for (let i = 0; i < itemSizes.length; i++) {
+      const proportion = totalSize > 0 ? itemSizes[i] / totalSize : 1 / count;
+      cumulative += proportion * 2 * Math.PI;
+      angles.push(cumulative - Math.PI / 2);
+    }
+    return angles;
+  }, [itemSizes, totalSize, count]);
+
+  const getItemAngle = (i: number) => cumulativeAngles[i] ?? 0;
+  const getItemPixelRadius = (i: number) => itemPixelRadii[i] ?? 14;
 
   const getAngleFromPoint = useCallback(
     (clientX: number, clientY: number): number | null => {
@@ -123,9 +166,10 @@ export default function BraceletCanvas() {
 
   const renderItem = (item: StudioItem, i: number, isDragged: boolean) => {
     const angle = getItemAngle(i);
-    const x = Math.cos(angle) * radius + size / 2 - beadRadius;
-    const y = Math.sin(angle) * radius + size / 2 - beadRadius;
-    const beadSize = beadRadius * 2;
+    const pixelR = getItemPixelRadius(i);
+    const x = Math.cos(angle) * radius + size / 2 - pixelR;
+    const y = Math.sin(angle) * radius + size / 2 - pixelR;
+    const beadPixelSize = pixelR * 2;
 
     let imageUrl: string | undefined;
     let colorHex = "#888";
@@ -134,7 +178,8 @@ export default function BraceletCanvas() {
     if (item.kind === "bead") {
       imageUrl = item.bead.imageDataUrl;
       colorHex = item.bead.colorHex;
-      tooltip = `${item.bead.name} — 拖拽移动 · 双击移除`;
+      const sz = item.beadSize ?? globalBeadSize;
+      tooltip = `${item.bead.name} (${sz}mm) — 拖拽移动 · 双击移除`;
     } else {
       imageUrl = item.accessory.imageDataUrl;
       colorHex = item.accessory.colorHex;
@@ -144,8 +189,8 @@ export default function BraceletCanvas() {
     if (isDragged) return null;
 
     const style: React.CSSProperties = {
-      width: beadSize,
-      height: beadSize,
+      width: beadPixelSize,
+      height: beadPixelSize,
       left: x,
       top: y,
       backgroundColor: imageUrl ? "transparent" : colorHex,
@@ -182,6 +227,17 @@ export default function BraceletCanvas() {
       </div>
     );
   };
+
+  // 拖拽中的元素用当前选中元素的 beadSize
+  const dragPixelRadius = dragging
+    ? (() => {
+        const dItem = currentItems[dragging.index];
+        if (dItem?.kind === "bead") {
+          return sizeToPixelRadius(dItem.beadSize ?? globalBeadSize);
+        }
+        return sizeToPixelRadius(globalBeadSize * 0.75);
+      })()
+    : 14;
 
   return (
     <div
@@ -221,7 +277,7 @@ export default function BraceletCanvas() {
             const angle = getItemAngle(i);
             const ix = Math.cos(angle) * radius + size / 2;
             const iy = Math.sin(angle) * radius + size / 2;
-            const dotSize = Math.max(3, Math.min(8, beadRadius * 0.35));
+            const dotSize = Math.max(3, Math.min(8, getItemPixelRadius(i) * 0.35));
             return (
               <div
                 key={`dot-${i}`}
@@ -246,16 +302,16 @@ export default function BraceletCanvas() {
           <div
             className="absolute rounded-full opacity-60 pointer-events-none z-30 overflow-hidden"
             style={{
-              width: beadRadius * 2,
-              height: beadRadius * 2,
+              width: dragPixelRadius * 2,
+              height: dragPixelRadius * 2,
               left:
                 dragPos.x -
                 (containerRef.current?.getBoundingClientRect().left || 0) -
-                beadRadius,
+                dragPixelRadius,
               top:
                 dragPos.y -
                 (containerRef.current?.getBoundingClientRect().top || 0) -
-                beadRadius,
+                dragPixelRadius,
               backgroundColor: (() => {
                 const dItem = currentItems[dragging.index];
                 if (!dItem) return "#888";

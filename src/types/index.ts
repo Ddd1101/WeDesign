@@ -36,6 +36,7 @@ export interface DesignBead {
   beadId: string;
   bead: CrystalBead;
   position: number;
+  beadSize?: number;
 }
 
 export interface DesignAccessory {

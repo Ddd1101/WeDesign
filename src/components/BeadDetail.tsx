@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { X, Gem } from "lucide-react";
 import type { CrystalBead, Accessory } from "@/types";
 import { useStudioStore } from "@/store/studioStore";
 import ImageUpload from "./ImageUpload";
+
+const BEAD_SIZE_OPTIONS = [6, 8, 10, 12, 14];
 
 /* ── 水晶质感渐变 ── */
 function crystalGradient(hex: string): string {
@@ -36,7 +39,7 @@ const typeLabels: Record<string, string> = {
 interface BeadProps {
   bead: CrystalBead;
   onClose: () => void;
-  onAdd: (bead: CrystalBead) => void;
+  onAdd: (bead: CrystalBead, beadSize?: number) => void;
   accessory?: never;
 }
 
@@ -51,6 +54,9 @@ type Props = BeadProps | AccessoryProps;
 
 export default function BeadDetail(props: Props) {
   const { onClose } = props;
+  const [selectedSize, setSelectedSize] = useState<number>(
+    props.bead?.size || 8,
+  );
   const updateBeadImage = useStudioStore((s) => s.updateBeadImage);
   const updateAccessoryImage = useStudioStore((s) => s.updateAccessoryImage);
 
@@ -126,6 +132,30 @@ export default function BeadDetail(props: Props) {
           <p className="text-[#e8e4dd]/60 text-sm leading-relaxed">{meaning}</p>
         </div>
 
+        {/* 珠子尺寸选择 — 仅对珠子显示 */}
+        {props.bead && (
+          <div className="mb-5 space-y-2">
+            <p className="text-xs text-[#e8e4dd]/25 tracking-wide">
+              珠子直径 (mm)
+            </p>
+            <div className="flex items-center gap-2">
+              {BEAD_SIZE_OPTIONS.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`px-3 py-1.5 rounded-xl text-sm tracking-wide transition-all duration-300 ${
+                    selectedSize === size
+                      ? "border border-[#c9a04e] bg-[#c9a04e]/15 text-[#c9a04e]"
+                      : "border border-white/[0.08] text-[#e8e4dd]/50 hover:text-[#e8e4dd]"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 图片上传 */}
         <div className="mb-5">
           <p className="text-xs text-[#e8e4dd]/25 mb-2.5 tracking-wide">
@@ -138,7 +168,7 @@ export default function BeadDetail(props: Props) {
         <button
           onClick={() => {
             if (props.bead) {
-              props.onAdd(props.bead);
+              props.onAdd(props.bead, selectedSize);
             } else {
               (props.onAdd as () => void)();
             }

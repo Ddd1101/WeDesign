@@ -38,10 +38,30 @@ interface Props {
 export default function BraceletPreview({ items, size }: Props) {
   const count = items.length;
   const radius = (size * 0.7) / 2;
-  const beadRadius =
-    count > 0
-      ? Math.min((2 * Math.PI * radius) / count / 2.2, size * 0.07)
-      : 10;
+
+  // 每个元素的实际尺寸（珠子用独立尺寸，配件用默认）
+  const defaultBeadSize = 8;
+  const itemSizes = items.map((item) => {
+    if (item.kind === "bead") return item.beadSize ?? defaultBeadSize;
+    return defaultBeadSize * 0.75;
+  });
+  const totalSize = itemSizes.reduce((s, sz) => s + sz, 0);
+
+  // 像素半径映射函数
+  const sizeToPx = (beadSize: number) => {
+    if (count === 0) return 10;
+    const base = Math.min((2 * Math.PI * radius) / count / 2.2, size * 0.07);
+    return Math.max(6, Math.min(20, (beadSize / 8) * base));
+  };
+
+  // 累积角度
+  const cumulativeAngles: number[] = [];
+  let cum = 0;
+  for (let i = 0; i < itemSizes.length; i++) {
+    const proportion = totalSize > 0 ? itemSizes[i] / totalSize : 1 / count;
+    cum += proportion * 2 * Math.PI;
+    cumulativeAngles.push(cum - Math.PI / 2);
+  }
 
   const getColorHex = (item: StudioItem): string => {
     if (item.kind === "bead") return item.bead.colorHex;
@@ -73,8 +93,8 @@ export default function BraceletPreview({ items, size }: Props) {
       </svg>
 
       {items.map((item, i) => {
-        const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
-        const s = beadRadius * 2;
+        const angle = cumulativeAngles[i] ?? 0;
+        const s = sizeToPx(itemSizes[i] ?? defaultBeadSize) * 2;
         const cx = Math.cos(angle) * radius + size / 2 - s / 2;
         const cy = Math.sin(angle) * radius + size / 2 - s / 2;
         const colorHex = getColorHex(item);

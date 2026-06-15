@@ -8,7 +8,14 @@ export default function SizeSettings() {
   const { wristSize, beadSize, currentItems, setWristSize, setBeadSize } =
     useStudioStore();
 
-  const hasConflict = currentItems.length * beadSize > wristSize;
+  // 用每个珠子的实际尺寸计算冲突
+  const totalBeadSize = currentItems.reduce((sum, item) => {
+    if (item.kind === "bead") {
+      return sum + (item.beadSize ?? beadSize);
+    }
+    return sum + beadSize * 0.75;
+  }, 0);
+  const hasConflict = totalBeadSize > wristSize;
 
   return (
     <div className="glass rounded-2xl p-4 space-y-4">
@@ -51,10 +58,10 @@ export default function SizeSettings() {
         </div>
       </div>
 
-      {/* 珠子尺寸 */}
+      {/* 珠子默认尺寸 */}
       <div className="space-y-2">
         <label className="text-sm text-[#e8e4dd]/50 tracking-wide">
-          珠子直径 (mm)
+          珠子默认直径 (mm)
         </label>
         <div className="flex items-center gap-2">
           {BEAD_PRESETS.map((size) => (
@@ -71,6 +78,9 @@ export default function SizeSettings() {
             </button>
           ))}
         </div>
+        <p className="text-[10px] text-[#e8e4dd]/20 tracking-wide">
+          每个珠子可单独设置尺寸，此处为默认值
+        </p>
       </div>
 
       {/* 冲突警告 */}
@@ -78,7 +88,7 @@ export default function SizeSettings() {
         <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl border border-red-500/20 bg-red-500/[0.06] animate-slide-up">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
           <p className="text-xs text-red-400/90 leading-relaxed">
-            珠子数量 × 珠子直径超出周长，请调整尺寸或减少珠子
+            珠子总尺寸超出周长，请调整尺寸或减少珠子
           </p>
         </div>
       )}

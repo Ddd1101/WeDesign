@@ -196,8 +196,8 @@ export default function BeadPanel() {
         <BeadDetail
           bead={detailBead}
           onClose={() => setDetailBead(null)}
-          onAdd={(b) => {
-            addBead(b);
+          onAdd={(b, beadSize) => {
+            addBead(b, beadSize);
             setDetailBead(null);
           }}
         />
