@@ -3,6 +3,7 @@ import { useStudioStore } from "@/store/studioStore";
 import BeadPanel from "@/components/BeadPanel";
 import BraceletCanvas from "@/components/BraceletCanvas";
 import Toolbar from "@/components/Toolbar";
+import SizeSettings from "@/components/SizeSettings";
 import SaveModal from "@/components/SaveModal";
 
 export default function Studio() {
@@ -16,8 +17,9 @@ export default function Studio() {
   return (
     <div className="h-screen bg-[#0a0a0f] flex flex-col pt-16">
       {/* 工具栏 */}
-      <div className="px-4 py-2 flex justify-center">
+      <div className="px-4 py-2 flex justify-center gap-3">
         <Toolbar onSave={() => setShowSave(true)} />
+        <SizeSettings />
       </div>
 
       {/* 主区域 */}
@@ -31,7 +33,8 @@ export default function Studio() {
         <BraceletCanvas />
 
         {/* 移动端底部珠子选择器 */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass h-36 overflow-y-auto">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass h-44 overflow-y-auto p-2 space-y-2">
+          <SizeSettings />
           <BeadPanel />
         </div>
       </div>

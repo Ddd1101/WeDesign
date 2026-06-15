@@ -3,7 +3,7 @@ import { useStudioStore } from "@/store/studioStore";
 import type { StudioItem } from "@/types";
 
 export default function BraceletCanvas() {
-  const { currentItems, removeItem, moveItem, insertItemAt, selectedItem } =
+  const { currentItems, removeItem, moveItem, insertItemAt, selectedItem, wristSize, beadSize } =
     useStudioStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<{
@@ -15,11 +15,14 @@ export default function BraceletCanvas() {
 
   const size = 360;
   const count = currentItems.length;
-  const radius = (size * 0.7) / 2;
-  const beadRadius =
+  const baseRadius = (size * 0.7) / 2;
+  const radius = Math.max(80, Math.min(180, (wristSize / 160) * baseRadius));
+
+  const baseBeadRadius =
     count > 0
       ? Math.min((2 * Math.PI * radius) / count / 2.2, size * 0.06)
       : 14;
+  const beadRadius = Math.max(8, Math.min(28, (beadSize / 8) * baseBeadRadius));
 
   const getItemAngle = (i: number) =>
     (i / Math.max(count, 1)) * 2 * Math.PI - Math.PI / 2;
@@ -209,7 +212,7 @@ export default function BraceletCanvas() {
         {/* 手链线 */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#d4a843]/30"
-          style={{ width: size * 0.7, height: size * 0.7 }}
+          style={{ width: radius * 2, height: radius * 2 }}
         />
 
         {/* 位置指示点 */}
@@ -218,11 +221,17 @@ export default function BraceletCanvas() {
             const angle = getItemAngle(i);
             const ix = Math.cos(angle) * radius + size / 2;
             const iy = Math.sin(angle) * radius + size / 2;
+            const dotSize = Math.max(3, Math.min(8, beadRadius * 0.35));
             return (
               <div
                 key={`dot-${i}`}
-                className="absolute w-1.5 h-1.5 rounded-full bg-[#d4a843]/20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                style={{ left: ix, top: iy }}
+                className="absolute rounded-full bg-[#d4a843]/20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                style={{
+                  left: ix,
+                  top: iy,
+                  width: dotSize,
+                  height: dotSize,
+                }}
               />
             );
           })}

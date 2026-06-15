@@ -24,6 +24,8 @@ export interface BraceletDesign {
   id: string;
   name: string;
   items: StudioItem[];
+  wristSize?: number;
+  beadSize?: number;
   createdAt: string;
   updatedAt: string;
 }

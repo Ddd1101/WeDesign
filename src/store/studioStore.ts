@@ -50,7 +50,11 @@ interface StudioState {
   historyIndex: number;
   savedDesigns: BraceletDesign[];
   selectedItem: CrystalBead | Accessory | null;
+  wristSize: number;
+  beadSize: number;
 
+  setWristSize: (size: number) => void;
+  setBeadSize: (size: number) => void;
   addBead: (bead: CrystalBead) => void;
   addAccessory: (accessory: Accessory) => void;
   addCustomBead: (
@@ -96,6 +100,11 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   historyIndex: 0,
   savedDesigns: loadSavedDesigns(),
   selectedItem: null,
+  wristSize: 160,
+  beadSize: 8,
+
+  setWristSize: (size: number) => set({ wristSize: size }),
+  setBeadSize: (size: number) => set({ beadSize: size }),
 
   addBead: (bead: CrystalBead) => {
     const { currentItems } = get();
@@ -241,12 +250,14 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   },
 
   saveDesign: (name: string) => {
-    const { currentItems, savedDesigns } = get();
+    const { currentItems, savedDesigns, wristSize, beadSize } = get();
     const now = new Date().toISOString();
     const design: BraceletDesign = {
       id: generateId(),
       name,
       items: currentItems,
+      wristSize,
+      beadSize,
       createdAt: now,
       updatedAt: now,
     };
@@ -263,6 +274,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       currentItems: [...items],
       history: newHistory,
       historyIndex: newHistory.length - 1,
+      wristSize: design.wristSize ?? 160,
+      beadSize: design.beadSize ?? 8,
     });
   },
 
