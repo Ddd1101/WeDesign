@@ -8,13 +8,9 @@ interface Props {
 }
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
-const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_SIZE = 2 * 1024 * 1024;
 
-export default function ImageUpload({
-  onUpload,
-  onClose,
-  currentImage,
-}: Props) {
+export default function ImageUpload({ onUpload, currentImage }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const [error, setError] = useState("");
@@ -45,14 +41,14 @@ export default function ImageUpload({
           <img
             src={preview}
             alt="预览"
-            className="w-20 h-20 rounded-xl object-cover border border-white/10"
+            className="w-20 h-20 rounded-xl object-cover border border-white/[0.08]"
           />
           <button
             onClick={() => {
               setPreview(null);
               inputRef.current?.click();
             }}
-            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs hover:bg-red-600 transition-colors"
+            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
           >
             <X className="w-3 h-3" />
           </button>
@@ -60,17 +56,19 @@ export default function ImageUpload({
       ) : (
         <button
           onClick={() => inputRef.current?.click()}
-          className="w-20 h-20 rounded-xl border-2 border-dashed border-[#d4a843]/30 flex flex-col items-center justify-center gap-1 hover:border-[#d4a843]/60 hover:bg-[#d4a843]/5 transition-all"
+          className="w-20 h-20 rounded-xl border-2 border-dashed border-[#c9a04e]/25 flex flex-col items-center justify-center gap-1 hover:border-[#c9a04e]/50 hover:bg-[#c9a04e]/[0.04] transition-all group"
         >
-          <Upload className="w-6 h-6 text-[#d4a843]/60" />
-          <span className="text-[10px] text-[#d4a843]/50">上传图片</span>
+          <Upload className="w-6 h-6 text-[#c9a04e]/40 group-hover:text-[#c9a04e]/70 transition-colors" />
+          <span className="text-[10px] text-[#c9a04e]/40 group-hover:text-[#c9a04e]/60 transition-colors">
+            上传图片
+          </span>
         </button>
       )}
 
       {error && <p className="text-xs text-red-400">{error}</p>}
 
-      <p className="text-[10px] text-[#f8f0e3]/25">
-        支持 PNG/JPG/WebP，最大 2MB
+      <p className="text-[10px] text-[#e8e4dd]/20">
+        PNG / JPG / WebP，最大 2MB
       </p>
 
       <input

@@ -14,16 +14,16 @@ export default function Studio() {
   };
 
   return (
-    <div className="h-screen bg-[#0d0618] flex flex-col pt-16">
+    <div className="h-screen bg-[#0a0a0f] flex flex-col pt-16">
       {/* 工具栏 */}
       <div className="px-4 py-2 flex justify-center">
         <Toolbar onSave={() => setShowSave(true)} />
       </div>
 
       {/* 主区域 */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden bg-grid">
         {/* 左侧珠子面板 */}
-        <div className="w-64 flex-shrink-0 hidden md:block">
+        <div className="w-72 flex-shrink-0 hidden md:block">
           <BeadPanel />
         </div>
 
@@ -31,7 +31,7 @@ export default function Studio() {
         <BraceletCanvas />
 
         {/* 移动端底部珠子选择器 */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1a0a2e]/95 backdrop-blur-md border-t border-white/10 h-32 overflow-y-auto">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass h-36 overflow-y-auto">
           <BeadPanel />
         </div>
       </div>

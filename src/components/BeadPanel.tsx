@@ -11,7 +11,7 @@ import BeadItem from "./BeadItem";
 import AccessoryItem from "./AccessoryItem";
 import BeadDetail from "./BeadDetail";
 import ImageUpload from "./ImageUpload";
-import { Plus } from "lucide-react";
+import { Plus, Gem, Wrench } from "lucide-react";
 
 type Tab = "beads" | "accessories";
 
@@ -30,7 +30,6 @@ export default function BeadPanel() {
   const [detailAcc, setDetailAcc] = useState<Accessory | null>(null);
   const [showBeadUpload, setShowBeadUpload] = useState(false);
   const [showAccUpload, setShowAccUpload] = useState(false);
-  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
 
   const {
     beadLibrary,
@@ -79,45 +78,47 @@ export default function BeadPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#1a0a2e]/50 backdrop-blur-sm border-r border-white/5">
+    <div className="h-full flex flex-col bg-[#0a0a0f] border-r border-white/[0.04]">
       {/* 标签页切换 */}
-      <div className="flex border-b border-white/5">
+      <div className="flex border-b border-white/[0.04]">
         <button
           onClick={() => setTab("beads")}
-          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium tracking-wide transition-all duration-300 ${
             tab === "beads"
-              ? "text-[#d4a843] border-b-2 border-[#d4a843]"
-              : "text-[#f8f0e3]/50 hover:text-[#f8f0e3]/80"
+              ? "text-[#c9a04e] border-b-2 border-[#c9a04e] bg-[#c9a04e]/[0.03]"
+              : "text-[#e8e4dd]/40 hover:text-[#e8e4dd]/70"
           }`}
         >
+          <Gem className="w-3.5 h-3.5" />
           珠子
         </button>
         <button
           onClick={() => setTab("accessories")}
-          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium tracking-wide transition-all duration-300 ${
             tab === "accessories"
-              ? "text-[#d4a843] border-b-2 border-[#d4a843]"
-              : "text-[#f8f0e3]/50 hover:text-[#f8f0e3]/80"
+              ? "text-[#c9a04e] border-b-2 border-[#c9a04e] bg-[#c9a04e]/[0.03]"
+              : "text-[#e8e4dd]/40 hover:text-[#e8e4dd]/70"
           }`}
         >
+          <Wrench className="w-3.5 h-3.5" />
           配件
         </button>
       </div>
 
       {/* 分类筛选和上传按钮 */}
-      <div className="p-3 space-y-2 border-b border-white/5">
+      <div className="p-3 space-y-2.5 border-b border-white/[0.04]">
         {tab === "beads" ? (
           <>
             <CategoryFilter active={beadCategory} onChange={setBeadCategory} />
             <button
               onClick={() => setShowBeadUpload(!showBeadUpload)}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs text-[#d4a843]/60 hover:text-[#d4a843] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#c9a04e]/50 hover:text-[#c9a04e] transition-colors w-full"
             >
               <Plus className="w-3 h-3" />
               添加自定义珠子
             </button>
             {showBeadUpload && (
-              <div className="pt-2">
+              <div className="pt-1 animate-slide-up">
                 <ImageUpload onUpload={handleBeadImageUpload} />
               </div>
             )}
@@ -129,10 +130,10 @@ export default function BeadPanel() {
                 <button
                   key={cat.key}
                   onClick={() => setAccCategory(cat.key)}
-                  className={`px-3 py-1.5 rounded-full text-xs transition-all duration-300 ${
+                  className={`px-3 py-1.5 rounded-full text-xs tracking-wide transition-all duration-300 ${
                     accCategory === cat.key
-                      ? "bg-[#d4a843]/20 text-[#d4a843] border border-[#d4a843]/40 shadow-[0_0_10px_rgba(212,168,67,0.1)]"
-                      : "bg-white/5 text-[#f8f0e3]/50 border border-transparent hover:text-[#f8f0e3]/80 hover:bg-white/10"
+                      ? "bg-[#c9a04e]/15 text-[#c9a04e] border border-[#c9a04e]/30"
+                      : "bg-white/[0.03] text-[#e8e4dd]/40 border border-white/[0.04] hover:text-[#e8e4dd]/70 hover:bg-white/[0.06]"
                   }`}
                 >
                   {cat.label}
@@ -141,13 +142,13 @@ export default function BeadPanel() {
             </div>
             <button
               onClick={() => setShowAccUpload(!showAccUpload)}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs text-[#d4a843]/60 hover:text-[#d4a843] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#c9a04e]/50 hover:text-[#c9a04e] transition-colors w-full"
             >
               <Plus className="w-3 h-3" />
               添加自定义配件
             </button>
             {showAccUpload && (
-              <div className="pt-2">
+              <div className="pt-1 animate-slide-up">
                 <ImageUpload onUpload={handleAccImageUpload} />
               </div>
             )}

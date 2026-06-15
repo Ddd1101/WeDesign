@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useStudioStore } from "@/store/studioStore";
 import type { StudioItem } from "@/types";
 

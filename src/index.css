@@ -1,18 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap");
-
 :root {
-  --color-bg: #0d0618;
-  --color-surface: #1a0a2e;
-  --color-gold: #d4a843;
-  --color-gold-dark: #b8860b;
-  --color-light: #f8f0e3;
-  --color-pink: #e8b4c8;
-  --color-blue: #a8d4e6;
-  --color-green: #b8d4a8;
+  --color-bg: #0a0a0f;
+  --color-bg-elevated: #12121a;
+  --color-surface: #181825;
+  --color-surface-hover: #1e1e2e;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-gold: #c9a04e;
+  --color-gold-light: #e0c878;
+  --color-gold-dark: #8b6914;
+  --color-text: #e8e4dd;
+  --color-text-dim: rgba(232, 228, 221, 0.5);
+  --color-text-muted: rgba(232, 228, 221, 0.3);
 }
 
 * {
@@ -27,18 +30,28 @@ html {
 
 body {
   font-family:
+    "Inter",
     system-ui,
     -apple-system,
     sans-serif;
   background-color: var(--color-bg);
-  color: var(--color-light);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 自定义滚动条 */
+/* ── 字体工具类 ── */
+.font-display {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.font-garamond {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+/* ── 自定义滚动条 ── */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -46,22 +59,93 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 168, 67, 0.2);
-  border-radius: 2px;
+  background: rgba(201, 160, 78, 0.2);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 168, 67, 0.4);
+  background: rgba(201, 160, 78, 0.35);
 }
 
-/* 浮动动画 */
+/* ── 微妙的网格纹理背景 ── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── 渐变遮罩 ── */
+.gradient-mask-b {
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.gradient-mask-r {
+  mask-image: linear-gradient(to right, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+}
+
+/* ── 动画 ── */
 @keyframes float {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(201, 160, 78, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(201, 160, 78, 0.35);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -69,23 +153,70 @@ body {
   animation: float 3s ease-in-out infinite;
 }
 
-/* 延迟工具类 */
-.delay-1000 {
-  animation-delay: 1s;
-}
-
-/* 进入动画 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 160, 78, 0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
 }
 
 .animate-in {
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+/* ── 玻璃效果工具类 ── */
+.glass {
+  background: rgba(24, 24, 37, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-light {
+  background: rgba(30, 30, 46, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── 金边装饰线 ── */
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 160, 78, 0.3),
+    transparent
+  );
+}
+
+/* ── 选中状态光晕 ── */
+.glow-gold {
+  box-shadow:
+    0 0 16px rgba(201, 160, 78, 0.2),
+    0 0 4px rgba(201, 160, 78, 0.1);
 }
