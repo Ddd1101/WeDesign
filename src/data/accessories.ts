@@ -1,0 +1,68 @@
+import type { Accessory } from "@/types";
+
+export const accessoryLibrary: Accessory[] = [
+  {
+    id: "a1",
+    name: "金色隔珠",
+    type: "spacer",
+    category: "金属隔珠",
+    meaning: "点缀分隔，增添层次感",
+    colorHex: "#d4a843",
+  },
+  {
+    id: "a2",
+    name: "银色隔珠",
+    type: "spacer",
+    category: "金属隔珠",
+    meaning: "简约点缀，优雅过渡",
+    colorHex: "#c0c0c0",
+  },
+  {
+    id: "a3",
+    name: "玫瑰金隔珠",
+    type: "spacer",
+    category: "金属隔珠",
+    meaning: "温柔点缀，浪漫气息",
+    colorHex: "#e8b4b8",
+  },
+  {
+    id: "a4",
+    name: "莲花吊坠",
+    type: "pendant",
+    category: "吊坠",
+    meaning: "纯净圣洁，心灵升华",
+    colorHex: "#e8d4f0",
+  },
+  {
+    id: "a5",
+    name: "如意吊坠",
+    type: "pendant",
+    category: "吊坠",
+    meaning: "吉祥如意，万事顺遂",
+    colorHex: "#d4a843",
+  },
+  {
+    id: "a6",
+    name: "星星挂饰",
+    type: "charm",
+    category: "挂饰",
+    meaning: "点亮心愿，梦想成真",
+    colorHex: "#f5d442",
+  },
+  {
+    id: "a7",
+    name: "月亮挂饰",
+    type: "charm",
+    category: "挂饰",
+    meaning: "温柔守护，静谧安宁",
+    colorHex: "#c0c0e0",
+  },
+  {
+    id: "a8",
+    name: "四叶草挂饰",
+    type: "charm",
+    category: "挂饰",
+    meaning: "幸运降临，四时吉祥",
+    colorHex: "#5daa68",
+  },
+];

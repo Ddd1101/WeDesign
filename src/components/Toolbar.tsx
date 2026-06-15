@@ -6,7 +6,7 @@ interface Props {
 }
 
 export default function Toolbar({ onSave }: Props) {
-  const { currentBeads, undo, redo, clearAll } = useStudioStore();
+  const { currentItems, undo, redo, clearAll } = useStudioStore();
 
   return (
     <div className="flex items-center gap-2 p-3 bg-[#1a0a2e]/80 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg">
@@ -37,9 +37,8 @@ export default function Toolbar({ onSave }: Props) {
 
       <div className="w-px h-6 bg-white/10" />
 
-      {/* 珠子计数 */}
       <div className="px-3 py-1.5 text-sm text-[#f8f0e3]/50">
-        {currentBeads.length} 颗珠子
+        {currentItems.length} 个元素
       </div>
 
       <div className="flex-1" />

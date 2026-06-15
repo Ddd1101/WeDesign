@@ -19,10 +19,12 @@ export default function DesignCard({ design, showActions = false, onDelete }: Pr
     navigate('/studio');
   };
 
+  const itemCount = design.items?.length || 0;
+
   return (
     <div className="group relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:border-[#d4a843]/40 transition-all duration-500 hover:shadow-[0_0_30px_rgba(212,168,67,0.1)]">
       <div className="p-6 flex items-center justify-center min-h-[160px] bg-gradient-to-b from-transparent to-[#1a0a2e]/40">
-        <BraceletPreview beads={design.beads} size={120} />
+        <BraceletPreview items={design.items || []} size={120} />
       </div>
 
       <div className="p-4 border-t border-white/5">
@@ -30,7 +32,7 @@ export default function DesignCard({ design, showActions = false, onDelete }: Pr
           {design.name}
         </h3>
         <p className="text-xs text-[#f8f0e3]/40">
-          {design.beads.length} 颗珠子 · {new Date(design.createdAt).toLocaleDateString('zh-CN')}
+          {itemCount} 个元素 · {new Date(design.createdAt).toLocaleDateString('zh-CN')}
         </p>
       </div>
 
